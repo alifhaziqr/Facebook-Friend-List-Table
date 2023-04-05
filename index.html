@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<body style="background-color:#000000;">
+		<title>Facebook Friend List Table</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+		<style>
+			a {
+				color: rgb(255, 255, 255);
+				font-family: Helvetica, sans-serif;
+			}
+
+			#menu {
+				position: absolute;
+				bottom: 20px;
+				width: 100%;
+				text-align: center;
+			}
+
+			.element {
+				width: 120px;
+				height: 160px;
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+				border: 1px solid rgba(127,255,255,0.25);
+				font-family: Helvetica, sans-serif;
+				text-align: center;
+				line-height: normal;
+				cursor: default;
+			}
+
+			.element:hover {
+				box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
+				border: 1px solid rgba(127,255,255,0.75);
+			}
+
+				.element .number {
+					position: absolute;
+					top: 20px;
+					right: 20px;
+					font-size: 12px;
+					color: rgba(127,255,255,0.75);
+				}
+
+				.element .symbol {
+					position: absolute;
+					top: 40px;
+					left: 0px;
+					right: 0px;
+					font-size: 60px;
+					font-weight: bold;
+					color: rgba(255,255,255,0.75);
+					text-shadow: 0 0 10px rgba(0,255,255,0.95);
+				}
+
+				.element .details {
+					position: absolute;
+					bottom: 15px;
+					left: 0px;
+					right: 0px;
+					font-size: 12px;
+					color: rgba(127,255,255,0.75);
+				}
+
+			button {
+				color: rgba(127,255,255,0.75);
+				background: transparent;
+				outline: 1px solid rgba(127,255,255,0.75);
+				border: 0px;
+				padding: 5px 10px;
+				cursor: pointer;
+			}
+
+			button:hover {
+				background-color: rgba(0,255,255,0.5);
+			}
+
+			button:active {
+				color: #000000;
+				background-color: rgba(0,255,255,0.75);
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="info"><a>Facebook Friend List Table</a> </div>
+		<div id="container"></div>
+		<div id="menu">
+			<button id="table">TABLE</button>
+			<button id="sphere">SPHERE</button>
+			<button id="helix">HELIX</button>
+			<button id="grid">GRID</button>
+			<button id="cone">CONE</button>
+		</div>
+
+		<!-- Import maps polyfill -->
+		<!-- Remove this when import maps will be widely supported -->
+		<script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+			import TWEEN from 'three/addons/libs/tween.module.js';
+			import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+			import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+
+			const table = [
+
+				'M', 'Amir', '30', 1, 1,
+				'F', 'Fauziah', '55', 2, 1,
+				'M', 'Hafiz', '33', 3, 1,
+				'M', 'Brenden', '25', 4, 1,
+				'F', 'Sofea', '21', 5, 1,
+				'F', 'Emma', '25', 6, 1,
+				'M', 'Afiq', '25', 7, 1,
+				'F', 'Afrina', '25', 8, 1,
+				'M', 'Raslan', '56', 9, 1,
+				'M', 'Junaid', '25', 10, 1,
+				'M', 'Zakwan', '25', 11, 1,
+				'M', 'Luqman', '25', 12, 1,
+				'M', 'Haikal', '26', 13, 1,
+				'F', 'Eddy', '25', 14, 1,
+				'F', 'Izza', '25', 15, 1,
+				'M', 'Nazhan', '25', 16, 1,
+				'M', 'Nasrul', '23', 17, 1,
+				'M', 'Nizyar', '26', 18, 1,
+				'M', 'Zeem', '25', 1, 2,
+				'F', 'Kamelia', '27', 2, 2,
+				'M', 'Shahiran', '28', 3, 2,
+				'M', 'Timothy', '23', 4, 2,
+				'M', 'Aiman', '23', 5, 2,
+				'F', 'Ain', '29', 6, 2,
+				'F', 'Deeba', '30', 7, 2,
+				'F', 'Ayu', '50', 8, 2,
+				'M', 'Naqib', '25', 9, 2,
+				'M', 'Nick', '28', 10, 2,
+				'M', 'Nuh', '30', 11, 2,
+				'M', 'Zarif', '24', 12, 2,
+				'F', 'Zara', '21', 13, 2,
+				'F', 'Ayra', '22', 14, 2,
+				'M', 'Syazwan', '25', 15, 2,
+				'M', 'Kamal', '25', 16, 2,
+				'M', 'Firdaus', '25', 17, 2,
+				'F', 'Najwa', '28', 18, 2,
+				'M', 'Alif', '26', 1, 3,
+				'M', 'Haziq', '26', 2, 3,
+				'M', 'Aimoon', '25', 3, 3,
+				'F', 'Alia', '25', 4, 3,
+				'F', 'Aida', '26', 5, 3,
+				'M', 'Arif', '25', 6, 3,
+				'M', 'Ipanggu', '26', 7, 3,
+				'M', 'Akmal', '23', 8, 3,
+				'F', 'Syahirah', '23', 9, 3,
+				'F', 'Sofiya', '24', 10, 3,
+				'M', 'Zafran', '25', 11, 3,
+				'M', 'Nazif', '29', 12, 3,
+				'M', 'Khairul', '30', 13, 3,
+				'M', 'Annur', '21', 14, 3,
+				'F', 'Sabrina', '25', 15, 3,
+				'M', 'Shah', '27', 16, 3,
+				'M', 'Amin', '25', 17, 3,
+				'F', 'Meera', '23', 18, 3,
+				'F', 'Tasha', '21', 1, 4,
+				'M', 'Shahidur', '27', 2, 4,
+				'M', 'Ipanggu', '25', 3, 4,
+				'F', 'Fahira', '23', 4, 4,
+				'M', 'Emile', '24', 5, 4,
+				'M', 'Lebron', '38', 6, 4,
+				'M', 'James', '38', 7, 4,
+				'M', 'Jason', '26', 8, 4,
+				'M', 'Tatum', '26', 9, 4,
+				'F', 'Candace', '23', 10, 4,
+				'M', 'Dwayne', '28', 11, 4,
+				'M', 'Wade', '28', 12, 4,
+				'F', 'Chead', '25', 13, 4,
+				'F', 'Juliette', '26', 14, 4,
+				'M', 'Miguel', '25', 15, 4,
+				'M', 'Micheal', '30', 16, 4,
+				'M', 'Jackson', '38', 17, 4,
+				'F', 'Nicole', '23', 18, 4,
+				'M', 'Muhammad', '30', 1, 5,
+				'F', 'Maria', '31', 2, 5,
+				'M', 'Yusuf', '38', 3, 5,
+				'M', 'Einstein', '56', 4, 5,
+				'F', 'Kelly', '26', 5, 5,
+				'M', 'Oubre', '21', 6, 5,
+				'M', 'Stephen', '35', 7, 5,
+				'M', 'Curry', '35', 8, 5,
+				'M', 'Terrence', '28', 9, 5,
+				'M', 'Ross', '32', 10, 5,
+				'F', 'Angel', '20', 11, 5,
+				'M', 'Jessie', '20', 12, 5,
+				'M', 'White', '21', 13, 5,
+				'F', 'Beatrice', '32', 14, 5,
+				'M', 'Francis', '22', 15, 5,
+				'F', 'Alya', '22', 16, 5,
+				'M', 'Thor', '22', 17, 5,
+				'F', 'Scarlet', '23', 18, 5,
+				'M', 'Chris', '23', 1, 6,
+				'M', 'Hemsworth', '23', 2, 6,
+				'M', 'Dwayne', '23', 3, 6,
+				'M', 'Johnson', '24', 4, 6,
+				'F', 'Natalie', '24', 5, 6,
+				'F', 'Puteri', '24', 6, 6,
+				'M', 'Wan', '24', 7, 6,
+				'M', 'Farihin', '25', 8, 6,
+				'M', 'Razin', '25', 9, 6,
+				'M', 'Yao', '25', 10, 6,
+				'M', 'Ming', '25', 11, 6,
+				'F', 'Tiara', '25', 12, 6,
+				'M', 'Tyson', '26', 13, 6,
+				'M', 'Chandler', '26', 14, 6,
+				'M', 'Joey', '26', 15, 6,
+				'F', 'Ahri', '27', 16, 6,
+				'F', 'Jinx', '27', 17, 6,
+				'F', 'Aria', '27', 18, 6,
+				'M', 'Messi', '27', 1, 7,
+				'M', 'Ronaldo', '28', 2, 7,
+				'M', 'Neymar', '28', 3, 7,
+				'F', 'Serena', '28', 4, 7,
+				'F', 'Anna', '28', 5, 7,
+				'F', 'Rose', '28', 6, 7,
+				'M', 'Fahmi', '29', 7, 7,
+				'M', 'Amirul', '29', 8, 7,
+				'M', 'Terry', '23', 9, 7,
+				'M', 'Durk', '35', 10, 7
+
+			];
+
+			let camera, scene, renderer;
+			let controls;
+
+			const objects = [];
+			const targets = { table: [], sphere: [], helix: [], grid: [], cone: [] };
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 3000;
+
+				scene = new THREE.Scene();
+
+				// table
+
+				for ( let i = 0; i < table.length; i += 5 ) {
+
+					const element = document.createElement( 'div' );
+					element.className = 'element';
+					if(table[i]=='M'){
+					element.style.backgroundColor = '#3390FF';}
+					else{element.style.backgroundColor = '#FC00E1';}
+
+					const number = document.createElement( 'div' );
+					number.className = 'number';
+					number.textContent = ( i / 5 ) + 1;
+					element.appendChild( number );
+
+					const symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = table[ i ];
+					element.appendChild( symbol );
+
+					const details = document.createElement( 'div' );
+					details.className = 'details';
+					details.innerHTML = table[ i + 1 ] + '<br>' + table[ i + 2 ];
+					element.appendChild( details );
+
+					const objectCSS = new CSS3DObject( element );
+					objectCSS.position.x = Math.random() * 4000 - 2000;
+					objectCSS.position.y = Math.random() * 4000 - 2000;
+					objectCSS.position.z = Math.random() * 4000 - 2000;
+					scene.add( objectCSS );
+
+					objects.push( objectCSS );
+
+					//
+
+					const object = new THREE.Object3D();
+					object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
+					object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
+
+					targets.table.push( object );
+
+				}
+
+				// sphere
+
+				const vector = new THREE.Vector3();
+
+				for ( let i = 0, l = objects.length; i < l; i ++ ) {
+
+					const phi = Math.acos( - 1 + ( 2 * i ) / l );
+					const theta = Math.sqrt( l * Math.PI ) * phi;
+
+					const object = new THREE.Object3D();
+
+					object.position.setFromSphericalCoords( 800, phi, theta );
+
+					vector.copy( object.position ).multiplyScalar( 2 );
+
+					object.lookAt( vector );
+
+					targets.sphere.push( object );
+
+				}
+
+				// helix
+
+				for ( let i = 0, l = objects.length; i < l; i ++ ) {
+
+					const theta = i * 0.175 + Math.PI;
+					const y = - ( i * 8 ) + 450;
+
+					const object = new THREE.Object3D();
+
+					object.position.setFromCylindricalCoords( 900, theta, y );
+
+					vector.x = object.position.x * 2;
+					vector.y = object.position.y;
+					vector.z = object.position.z * 2;
+
+					object.lookAt( vector );
+
+					targets.helix.push( object );
+
+				}
+
+				// grid
+
+				for ( let i = 0; i < objects.length; i ++ ) {
+
+					const object = new THREE.Object3D();
+
+					object.position.x = ( ( i % 5 ) * 400 ) - 800;
+					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+					object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+
+					targets.grid.push( object );
+
+				}
+				
+				//cone
+
+				for ( let i = 0, l = objects.length; i < l; i ++ ) {	
+					
+					const theta = i * 8 + Math.PI;
+					const y = - ( i* 12 ) + 450;
+					const x = - ( i* 3) + 450;
+
+					const object = new THREE.Object3D();
+					
+					object.position.setFromCylindricalCoords( x,theta, y );
+
+					vector.x = object.position.x * 2;
+					vector.y = object.position.y;
+					vector.z = object.position.z * 2;
+
+					object.lookAt( vector );
+
+					targets.cone.push( object );
+				
+				}
+
+				//
+
+				renderer = new CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//
+
+				controls = new TrackballControls( camera, renderer.domElement );
+				controls.minDistance = 500;
+				controls.maxDistance = 6000;
+				controls.addEventListener( 'change', render );
+
+				const buttonTable = document.getElementById( 'table' );
+				buttonTable.addEventListener( 'click', function () {
+
+					transform( targets.table, 2000 );
+
+				} );
+
+				const buttonSphere = document.getElementById( 'sphere' );
+				buttonSphere.addEventListener( 'click', function () {
+
+					transform( targets.sphere, 2000 );
+
+				} );
+
+				const buttonHelix = document.getElementById( 'helix' );
+				buttonHelix.addEventListener( 'click', function () {
+
+					transform( targets.helix, 2000 );
+
+				} );
+
+				const buttonGrid = document.getElementById( 'grid' );
+				buttonGrid.addEventListener( 'click', function () {
+
+					transform( targets.grid, 2000 );
+
+				} );
+
+				const buttonCone = document.getElementById( 'cone' );
+				buttonCone.addEventListener( 'click', function () {
+
+					transform( targets.cone, 2000 );
+
+				} );
+
+				transform( targets.table, 2000 );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function transform( targets, duration ) {
+
+				TWEEN.removeAll();
+
+				for ( let i = 0; i < objects.length; i ++ ) {
+
+					const object = objects[ i ];
+					const target = targets[ i ];
+
+					new TWEEN.Tween( object.position )
+						.to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+					new TWEEN.Tween( object.rotation )
+						.to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
+						.easing( TWEEN.Easing.Exponential.InOut )
+						.start();
+
+				}
+
+				new TWEEN.Tween( this )
+					.to( {}, duration * 2 )
+					.onUpdate( render )
+					.start();
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				render();
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				TWEEN.update();
+
+				controls.update();
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
+</html>
